@@ -1,0 +1,111 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Базовий клас "Людина"
+class Person {
+protected:
+    string name;
+    int age;
+public:
+    // Конструктор за замовчуванням
+    Person() : name(""), age(0) {}
+
+    // Конструктор з параметрами
+    Person(const string& name_val, int age_val) : name(name_val), age(age_val) {}
+
+    // Конструктор копіювання
+    Person(const Person& other) {
+        name = other.name;
+        age = other.age;
+    }
+
+    // Оператор присвоювання
+    Person& operator=(const Person& other) {
+        if (this != &other) {
+            name = other.name;
+            age = other.age;
+        }
+        return *this;
+    }
+
+    // Функція введення з потоку
+    void input() {
+        cout << "Enter name: ";
+        cin >> name;
+        cout << "Enter age: ";
+        cin >> age;
+    }
+
+    // Функція виводу у потік
+    friend ostream& operator<<(ostream& os, const Person& person) {
+        os << "Name: " << person.name << ", Age: " << person.age;
+        return os;
+    }
+};
+
+// Похідний клас "Службовець"
+class Employee : public Person {
+private:
+    string position;
+    double salary;
+public:
+    // Конструктор за замовчуванням
+    Employee() : Person(), position(""), salary(0.0) {}
+
+    // Конструктор з параметрами
+    Employee(const string& name_val, int age_val, const string& position_val, double salary_val)
+        : Person(name_val, age_val), position(position_val), salary(salary_val) {}
+
+    // Конструктор копіювання
+    Employee(const Employee& other) : Person(other) {
+        position = other.position;
+        salary = other.salary;
+    }
+
+    // Оператор присвоювання
+    Employee& operator=(const Employee& other) {
+        if (this != &other) {
+            Person::operator=(other);
+            position = other.position;
+            salary = other.salary;
+        }
+        return *this;
+    }
+
+    // Функція введення з потоку
+    void input() {
+        Person::input();
+        cout << "Enter position: ";
+        cin >> position;
+        cout << "Enter salary: ";
+        cin >> salary;
+    }
+
+    // Функція виводу у потік
+    friend ostream& operator<<(ostream& os, const Employee& employee) {
+        os << static_cast<const Person&>(employee) << ", Position: " << employee.position << ", Salary: " << employee.salary;
+        return os;
+    }
+};
+
+int main() {
+    // Тестування класу Employee
+    Employee emp1("John", 30, "Manager", 50000.0);
+    cout << "Employee 1 details: " << emp1 << endl;
+
+    Employee emp2;
+    cout << "Enter details for Employee 2:" << endl;
+    emp2.input();
+    cout << "Employee 2 details: " << emp2 << endl;
+
+    Employee emp3 = emp1; // Виклик конструктору копіювання
+    cout << "Employee 3 details (copy of Employee 1): " << emp3 << endl;
+
+    Employee emp4;
+    emp4 = emp2; // Виклик оператора присвоювання
+    cout << "Employee 4 details (copy of Employee 2 using assignment operator): " << emp4 << endl;
+
+    return 0;
+}
